@@ -1,6 +1,8 @@
-import path from 'path';
-import requireIndex from 'requireindex';
+import * as path from 'path';
 import * as eslint from 'eslint';
+
+// @ts-ignore
+import requireIndex from 'requireindex';
 
 const rulesPath = path.resolve(__dirname, 'rules');
 
