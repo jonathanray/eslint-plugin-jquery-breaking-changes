@@ -1,0 +1,39 @@
+{
+  "name": "eslint-plugin-jquery-breaking-changes",
+  "version": "0.1.0",
+  "description": "Finds breaking changes in jQuery code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonathanray/eslint-plugin-jquery-breaking-changes.git"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "eslint-jquery",
+    "eslint-plugin-jquery",
+    "jquery",
+    "jquery-migrate"
+  ],
+  "author": "Jonathan Ray",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test --recursive"
+  },
+  "dependencies": {
+    "requireindex": "~1.1.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^6.1.2",
+    "@types/estree": "0.0.39",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.11.1",
+    "@types/requireindex": "^1.2.0",
+    "eslint": "~3.9.1",
+    "mocha": "^3.1.2"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "license": "MIT"
+}
