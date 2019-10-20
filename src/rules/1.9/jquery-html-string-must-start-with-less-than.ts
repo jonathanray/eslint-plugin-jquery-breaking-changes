@@ -1,4 +1,3 @@
-import * as utils from '../utils';
 import * as estree from 'estree';
 import * as eslint from 'eslint';
 

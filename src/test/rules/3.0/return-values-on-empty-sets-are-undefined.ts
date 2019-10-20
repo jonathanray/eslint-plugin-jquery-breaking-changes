@@ -9,8 +9,8 @@ const affectedMethods = [
     'offsetTop', 'offsetLeft' // Offset methods
 ];
 
-const valid = [];
-const invalid = [];
+const valid: Array<string | RuleTester.ValidTestCase> = [];
+const invalid: RuleTester.InvalidTestCase[] = [];
 
 affectedMethods.forEach((methodName) => {
     valid.push(`$("input").${methodName}()`);

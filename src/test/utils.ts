@@ -1,11 +1,11 @@
 import * as assert from 'assert';
-import * as espree from 'espree';
 import * as estree from 'estree';
 import * as eslint from 'eslint';
 import * as utils from '../rules/utils';
 
+const espree = require('espree');
 // @ts-ignore
-const Traverser = require('eslint/lib/util/traverser');
+const Traverser = require('eslint/lib/shared/traverser');
 const traverser = new Traverser();
 
 describe('utils', () => {
@@ -279,23 +279,21 @@ describe('utils', () => {
 });
 
 function parseToESLint(source: string): { ast: estree.Program, globalScope: eslint.Scope.Scope } {
-	// @ts-ignore
-	const linter = eslint.linter;
-	linter.reset();
+	const linter = new eslint.Linter();
+	const errors = linter.verify(source, {});
 
-	const errors = linter.verify(source);
 	if (errors.length) {
-		throw errors[0];
+		throw errors;
 	}
 
 	const sourceCode = linter.getSourceCode();
 	return {
 		ast: sourceCode.ast,
-		globalScope: linter.getScope()
+		globalScope: sourceCode.scopeManager.globalScope
 	};
 }
 
-function parseToNode(source): estree.Node {
+function parseToNode(source: string): estree.Node {
 	const ast = parseToESLint(source).ast;
 	return (ast.body[0] as estree.ExpressionStatement).expression;
 }
@@ -303,9 +301,8 @@ function parseToNode(source): estree.Node {
 function getCallExpression(ast: estree.Program, functionName: string): estree.CallExpression {
 	let callExpression: estree.CallExpression;
 
-	// @ts-ignore
 	traverser.traverse(ast, {
-		enter(node: estree.Node, parent: estree.Node) {
+		enter(node: estree.Node) {
 			if (utils.isCallExpression(node) && utils.isIdentifier(node.callee, functionName)) {
 				callExpression = node;
 			}

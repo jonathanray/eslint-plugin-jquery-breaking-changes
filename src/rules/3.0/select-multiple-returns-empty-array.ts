@@ -40,8 +40,8 @@ export const rule: eslint.Rule.RuleModule = {
 	}
 };
 
-function couldBeSelectMultiple(nameOrSelector): boolean {
-	if (typeof nameOrSelector !== 'string' || nameOrSelector === '') return false;
+function couldBeSelectMultiple(nameOrSelector: string): boolean {
+	if (nameOrSelector === '') return false;
 	nameOrSelector = nameOrSelector.trim().toLowerCase();
 
 	if (!nameOrSelector.includes('select') && !nameOrSelector.includes('dropdown')) return false;

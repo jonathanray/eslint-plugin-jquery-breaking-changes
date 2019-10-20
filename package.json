@@ -16,9 +16,9 @@
     "jquery-migrate"
   ],
   "author": "Jonathan Ray",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "mocha test --recursive"
+    "test": "mocha lib/test --recursive"
   },
   "dependencies": {
     "requireindex": "^1.2.0"

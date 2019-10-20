@@ -1,5 +1,5 @@
 import { rule } from '../../../rules/1.9/ajax-events-should-be-attached-to-document';
-import { RuleTester } from 'eslint';
+import { RuleTester, } from 'eslint';
 
 const ruleTester = new RuleTester();
 
@@ -12,8 +12,8 @@ const ajaxEventNames = [
     'ajaxSuccess'
 ];
 
-const valid = [];
-const invalid = [];
+const valid: Array<string | RuleTester.ValidTestCase> = [];
+const invalid: RuleTester.InvalidTestCase[] = [];
 
 ajaxEventNames.forEach((ajaxEventName) => {
     valid.push(`$(document).${ajaxEventName}(function() {})`);

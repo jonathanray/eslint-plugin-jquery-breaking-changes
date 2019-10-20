@@ -73,7 +73,7 @@ export function getAssignedNode(node: estree.Node, context: eslint.Rule.RuleCont
 	const assignedValue = getAssignedNodeByScope(node.name, scope.variableScope);
 	return assignedValue !== undefined ? assignedValue : node;
 
-	function getAssignedNodeByScope(name: string, scope: eslint.Scope.Scope | null) {
+	function getAssignedNodeByScope(name: string, scope: eslint.Scope.Scope | null): estree.Node {
 		while (scope) {
 			const assignment = getVariableAssignment(name, scope.block);
 			if (assignment !== undefined) return assignment;

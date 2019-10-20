@@ -1,5 +1,6 @@
 import path from 'path';
 import requireIndex from 'requireindex';
+import * as eslint from 'eslint';
 
 const rulesPath = path.resolve(__dirname, 'rules');
 
@@ -23,7 +24,7 @@ export const configs = {
 	}
 }
 
-function createRulesWithDefaultSeverities(rules): Record<string, number> {
+function createRulesWithDefaultSeverities(rules: Record<string, eslint.Rule.RuleModule>): Record<string, number> {
 	const entries: Record<string, number> = {};
 	for (const key of Object.keys(rules)) {
 		entries[`jquery-breaking-changes/${key}`] = rules[key].meta.type === 'problem' ? 2 : 1;
