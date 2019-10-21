@@ -5,10 +5,10 @@ node_js:
 env:
   - ESLINT_VERSION=6
   - ESLINT_VERSION=5
-  - ESLINT_VERSION=4
 install:
-  - npm upgrade "eslint@^$ESLINT_VERSION"
-script:
+  - if [[ $ESLINT_VERSION != "6" ]]; then
+    npm upgrade "eslint@^$ESLINT_VERSION"
+    fi
   - if [[ $ESLINT_VERSION == "6" ]]; then
     npm run eslint
     fi
