@@ -7,16 +7,6 @@ env:
   - ESLINT_VERSION=6
   - ESLINT_VERSION=5
   - ESLINT_VERSION=4
-jobs:
-  exclude:
-    - node_js: "10"
-    - env: ESLINT_VERSION=5
-    - node_js: "10"
-    - env: ESLINT_VERSION=4
-    - node_js: "8"
-    - env: ESLINT_VERSION=5
-    - node_js: "8"
-    - env: ESLINT_VERSION=4
 install:
   - if [[ $ESLINT_VERSION != "6" ]]; then npm i --package-lock-only "eslint@^$ESLINT_VERSION"; fi
   - npm ci
