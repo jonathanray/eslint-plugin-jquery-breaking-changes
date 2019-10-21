@@ -325,16 +325,22 @@ export function isJQueryMemberExpression(node: estree.Node, propName: string | s
 	return isJQuery(node.object);
 }
 
-export function getExcludesFromContextOptions(context: eslint.Rule.RuleContext) {
-	if (typeof context !== 'object') return [];
-	if (typeof context.options !== 'object') return [];
-	if (context.options.length === 0) return [];
+
+export function getContextOptions(context: eslint.Rule.RuleContext) {
+	if (typeof context !== 'object') return {};
+	if (typeof context.options !== 'object') return {};
+	if (context.options.length === 0) return {};
 
 	const options = context.options[0];
-	if (typeof options !== 'object') return [];
-	if (options === null) return [];
+	if (typeof options !== 'object' || options === null) return {};
 
+	return options;
+}
+
+export function getExcludesFromContextOptions(context: eslint.Rule.RuleContext) {
+	const options = getContextOptions(context);
 	const excludes: Array<string | RegExp> = Array.isArray(options.exclude) ? options.exclude : [options.exclude];
+
 	return excludes
 		.map(exclude => {
 			if (typeof exclude === 'string') {

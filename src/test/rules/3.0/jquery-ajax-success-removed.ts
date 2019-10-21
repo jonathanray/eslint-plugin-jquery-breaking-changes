@@ -12,6 +12,9 @@ ruleTester.run('jquery-ajax-success-removed', rule, {
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
         '$.post().then().catch().finally();',
+        '$http({}).success()',
+        '$http.get().success()',
+        '$http.post().success()',
     ],
 
     invalid: [
@@ -32,23 +35,32 @@ ruleTester.run('jquery-ajax-success-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$http({}).success()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.get().success()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.post().success()',
-            errors: [{ message }]
-        },
-        {
             code: '$.ajax({ success: function() {} })',
             errors: [{ message }]
         },
         {
             code: 'var obj = { success: function() {} }; $.ajax(obj)',
+            errors: [{ message }]
+        },
+        {
+            code: '$http({}).success()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.get().success()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.post().success()',
+            options: [{
+                '$http': true
+            }],
             errors: [{ message }]
         }
     ]

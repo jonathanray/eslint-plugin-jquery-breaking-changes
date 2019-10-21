@@ -11,6 +11,7 @@ export const rule: eslint.Rule.RuleModule = {
 	},
 	create: (context) => {
 		const excludes = utils.getExcludesFromContextOptions(context);
+		const includeAngularHttp = !!utils.getContextOptions(context)['$http'];
 
 		return {
 			CallExpression(node: estree.CallExpression) {
@@ -23,6 +24,10 @@ export const rule: eslint.Rule.RuleModule = {
 					const arg = utils.getAssignedNode(node.arguments[0], context);
 					if (arg === undefined) return false;
 					if (!utils.isObjectExpression(arg, 'complete')) return;
+				} else if (!includeAngularHttp) {
+					const rootNode = utils.getRootNode(node.callee);
+					if (utils.isIdentifier(rootNode, '$http')) return;
+					if (utils.isMemberExpression(rootNode, '$http')) return;
 				}
 
 				context.report({

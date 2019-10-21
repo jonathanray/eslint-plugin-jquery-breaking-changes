@@ -11,7 +11,10 @@ ruleTester.run('jquery-ajax-complete-removed', rule, {
         '$.ajax().then().catch().finally();',
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
-        '$.post().then().catch().finally();'
+        '$.post().then().catch().finally();',
+        '$http({}).complete()',
+        '$http.get().complete()',
+        '$http.post().complete()',
     ],
 
     invalid: [
@@ -32,23 +35,32 @@ ruleTester.run('jquery-ajax-complete-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$http({}).complete()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.get().complete()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.post().complete()',
-            errors: [{ message }]
-        },
-        {
             code: '$.ajax({ complete: function() {} })',
             errors: [{ message }]
         },
         {
             code: 'var obj = { complete: function() {} }; $.ajax(obj)',
+            errors: [{ message }]
+        },
+        {
+            code: '$http({}).complete()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.get().complete()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.post().complete()',
+            options: [{
+                '$http': true
+            }],
             errors: [{ message }]
         }
     ]

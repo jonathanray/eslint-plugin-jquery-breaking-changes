@@ -12,7 +12,10 @@ ruleTester.run('jquery-ajax-error-removed', rule, {
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
         '$.post().then().catch().finally();',
-        'console.error();'
+        'console.error();',
+        '$http({}).error()',
+        '$http.get().error()',
+        '$http.post().error()',
     ],
 
     invalid: [
@@ -37,23 +40,32 @@ ruleTester.run('jquery-ajax-error-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$http({}).error()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.get().error()',
-            errors: [{ message }]
-        },
-        {
-            code: '$http.post().error()',
-            errors: [{ message }]
-        },
-        {
             code: '$.ajax({ error: function() {} })',
             errors: [{ message }]
         },
         {
             code: 'var obj = { error: function() {} }; $.ajax(obj)',
+            errors: [{ message }]
+        },
+        {
+            code: '$http({}).error()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.get().error()',
+            options: [{
+                '$http': true
+            }],
+            errors: [{ message }]
+        },
+        {
+            code: '$http.post().error()',
+            options: [{
+                '$http': true
+            }],
             errors: [{ message }]
         }
     ]
