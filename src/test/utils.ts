@@ -4,8 +4,15 @@ import * as eslint from 'eslint';
 import * as utils from '../rules/utils';
 
 const espree = require('espree');
-// @ts-ignore
-const Traverser = require('eslint/lib/shared/traverser');
+
+let Traverser: any;
+try {
+	// ESLint 6
+	Traverser = require('eslint/lib/shared/traverser');
+} catch {
+	// ESLint < 6
+	Traverser = require('eslint/lib/util/traverser');
+}
 const traverser = new Traverser();
 
 describe('utils', () => {
