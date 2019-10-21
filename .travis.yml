@@ -10,6 +10,5 @@ env:
 install:
   - if [[ $ESLINT_VERSION != "6" ]]; then npm i --package-lock-only "eslint@^$ESLINT_VERSION"; fi
   - npm ci
-  - npm ls eslint --silent
   - if [[ $ESLINT_VERSION == "6" ]]; then npm run eslint; fi
   
