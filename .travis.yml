@@ -1,10 +1,13 @@
 language: node_js
 node_js:
+  - "12"
   - "10"
   - "8"
 env:
   - ESLINT_VERSION=6
   - ESLINT_VERSION=5
+  - ESLINT_VERSION=4
+  - ESLINT_VERSION=3
 install:
   - if [[ $ESLINT_VERSION != "6" ]]; then npm upgrade "eslint@^$ESLINT_VERSION"; fi
   - npm ci
