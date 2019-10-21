@@ -2,6 +2,14 @@ language: node_js
 node_js:
   - "10"
   - "8"
+env:
+  - ESLINT_VERSION=6
+  - ESLINT_VERSION=5
+  - ESLINT_VERSION=4
+install:
+  - npm upgrade "eslint@^$ESLINT_VERSION"
 script:
-  - npm run eslint
-  - npm test
+  - if [[ $ESLINT_VERSION == "6" ]]; then
+    npm run eslint
+    fi
+  
