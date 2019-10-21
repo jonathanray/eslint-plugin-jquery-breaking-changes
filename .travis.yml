@@ -9,7 +9,7 @@ env:
   - ESLINT_VERSION=4
   - ESLINT_VERSION=3
 install:
-  - if [[ $ESLINT_VERSION != "6" ]]; then npm upgrade "eslint@^$ESLINT_VERSION"; fi
+  - if [[ $ESLINT_VERSION != "6" ]]; then npm i "eslint@^$ESLINT_VERSION" && npm ls eslint; fi
   - npm ci
   - if [[ $ESLINT_VERSION == "6" ]]; then npm run eslint; fi
   
