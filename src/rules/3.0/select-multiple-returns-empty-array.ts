@@ -22,9 +22,9 @@ export const rule: eslint.Rule.RuleModule = {
 				if (!utils.couldCompareAgainstNull(node, context)) return;
 
 				if (!utils.isBinaryExpression(node.parent)) {
-					let selectors = utils.getJQuerySelectors(node.callee);
+					const selectors = utils.getJQuerySelectors(node.callee);
 					if (selectors.length) {
-						if (!couldBeSelectMultiple(selectors.join(' ').replace(/  /g, ' '))) return;
+						if (!couldBeSelectMultiple(selectors.join(' ').replace(/ {2}/g, ' '))) return;
 					} else {
 						const rootObj = utils.getRootNode(node.callee);
 						if (rootObj && !couldBeSelectMultiple(rootObj.name)) return;

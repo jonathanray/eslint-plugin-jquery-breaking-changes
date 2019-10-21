@@ -278,7 +278,7 @@ describe('utils', () => {
 	});
 });
 
-function parseToESLint(source: string): { ast: estree.Program, globalScope: eslint.Scope.Scope } {
+function parseToESLint(source: string) {
 	const linter = new eslint.Linter();
 	const errors = linter.verify(source, {});
 

@@ -17,7 +17,7 @@ export function getRootNode(node: estree.Node): estree.Identifier {
 	return undefined;
 }
 
-export function isJQuery(node: estree.Node, includeCommonElements: boolean = false): node is estree.Identifier {
+export function isJQuery(node: estree.Node, includeCommonElements?: boolean): node is estree.Identifier {
 	// Intentionally does NOT recurse up chained methods
 	if (isIdentifier(node)) {
 		const name = node.name.toLowerCase();
@@ -372,7 +372,7 @@ export function shouldExcludeNode(node: estree.Node, excludedExpressions: Array<
 }
 
 export function couldCompareAgainstNull(node: estree.Node, context: eslint.Rule.RuleContext): boolean {
-	const parent: estree.Node = (node as any).parent;
+	const parent: estree.Node = (node as any).parent; // eslint-disable-line @typescript-eslint/no-explicit-any
 	if (!parent) return false;
 
 	if (isBinaryExpression(parent)) {
@@ -382,7 +382,7 @@ export function couldCompareAgainstNull(node: estree.Node, context: eslint.Rule.
 	}
 
 	if (isExpressionStatement(parent)) {
-		return isLabeledStatement((parent as any).parent);
+		return isLabeledStatement((parent as any).parent);  // eslint-disable-line @typescript-eslint/no-explicit-any
 	}
 
 	if (isAssignmentExpression(parent)) return true;

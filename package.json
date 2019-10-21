@@ -18,7 +18,8 @@
   "author": "Jonathan Ray",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha lib/test --recursive"
+    "test": "mocha lib/test --recursive",
+    "eslint": "eslint --ext .ts ."
   },
   "dependencies": {
     "requireindex": "^1.2.0"
@@ -29,8 +30,11 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.1",
     "@types/requireindex": "^1.2.0",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
     "eslint": "^6.5.1",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "typescript": "^3.6.4"
   },
   "engines": {
     "node": ">=8.0.0"
