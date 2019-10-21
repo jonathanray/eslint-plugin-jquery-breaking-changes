@@ -1,10 +1,10 @@
-import { rule } from '../../../rules/3.0/wrapall-function-only-calls-the-function-once';
+import { rule } from '../../../rules/3.0/wrapAll-function-only-calls-the-function-once';
 import { RuleTester } from 'eslint';
 
 const ruleTester = new RuleTester();
 const message = '.wrapAll(function) only calls the function once in jQuery 3.0';
 
-ruleTester.run('wrapall-function-only-calls-the-function-once', rule, {
+ruleTester.run('wrapAll-function-only-calls-the-function-once', rule, {
     valid: [
         '$("").wrapAll("")'
     ],
