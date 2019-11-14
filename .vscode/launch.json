@@ -10,26 +10,30 @@
 			"name": "Test Rules",
 			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
 			"args": [
+				"-r",
+				"ts-node/register/transpile-only",
 				"-u",
-				"tdd",
+				"bdd",
 				"--timeout",
 				"999999",
 				"--colors",
-				"${workspaceFolder}/test/rules/3.0/width-and-height-can-return-non-integer-values.js"
+				"${workspaceFolder}/src/test/rules/3.0/data-object-with-dash.ts"
 			]
 		},
 		{
 			"type": "node",
 			"request": "launch",
 			"name": "Test Utils",
-			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"program": "${workspaceFolder}/lib/node_modules/mocha/bin/_mocha",
 			"args": [
+				"-r",
+				"ts-node/register/transpile-only",
 				"-u",
-				"tdd",
+				"bdd",
 				"--timeout",
 				"999999",
 				"--colors",
-				"${workspaceFolder}/test/utils.js"
+				"${workspaceFolder}/src/test/utils.ts"
 			]
 		}
 	]
