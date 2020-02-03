@@ -6,16 +6,19 @@ const message = 'jQuery.ajax().error() removed in jQuery 3.0';
 
 ruleTester.run('jquery-ajax-error-removed', rule, {
     valid: [
+        'obj.error()',
+        'obj.error("notCallback")',
+        '$.obj.error()',
         '$.ajax({})',
         '$.ajax(obj)',
         '$.ajax().then().catch().finally();',
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
         '$.post().then().catch().finally();',
-        'console.error();',
-        '$http({}).error()',
-        '$http.get().error()',
-        '$http.post().error()',
+        '$http({})',
+        '$http.get()',
+        '$http.post()',
+        '$.ajax({ error: function() {} })'
     ],
 
     invalid: [
@@ -36,37 +39,24 @@ ruleTester.run('jquery-ajax-error-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$.post().then().error()',
-            errors: [{ message }]
-        },
-        {
-            code: '$.ajax({ error: function() {} })',
-            errors: [{ message }]
-        },
-        {
-            code: 'var obj = { error: function() {} }; $.ajax(obj)',
-            errors: [{ message }]
-        },
-        {
             code: '$http({}).error()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.get().error()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.post().error()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
-        }
+        },
+        {
+            code: 'obj.error(function() {})',
+            errors: [{ message }]
+        },
+        {
+            code: 'obj.error(callback)',
+            errors: [{ message }]
+        },
     ]
 });

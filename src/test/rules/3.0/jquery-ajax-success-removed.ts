@@ -6,15 +6,19 @@ const message = 'jQuery.ajax().success() removed in jQuery 3.0';
 
 ruleTester.run('jquery-ajax-success-removed', rule, {
     valid: [
+        'obj.success()',
+        'obj.success("notCallback")',
+        '$.obj.success()',
         '$.ajax({})',
         '$.ajax(obj)',
         '$.ajax().then().catch().finally();',
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
         '$.post().then().catch().finally();',
-        '$http({}).success()',
-        '$http.get().success()',
-        '$http.post().success()',
+        '$http({})',
+        '$http.get()',
+        '$http.post()',
+        '$.ajax({ success: function() {} })'
     ],
 
     invalid: [
@@ -35,33 +39,24 @@ ruleTester.run('jquery-ajax-success-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$.ajax({ success: function() {} })',
-            errors: [{ message }]
-        },
-        {
-            code: 'var obj = { success: function() {} }; $.ajax(obj)',
-            errors: [{ message }]
-        },
-        {
             code: '$http({}).success()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.get().success()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.post().success()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
-        }
+        },
+        {
+            code: 'obj.success(function() {})',
+            errors: [{ message }]
+        },
+        {
+            code: 'obj.success(callback)',
+            errors: [{ message }]
+        },
     ]
 });
