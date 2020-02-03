@@ -6,7 +6,13 @@ const message = 'events not fired by .data("name.with.periods") in jQuery 1.9';
 
 ruleTester.run('data-name-with-periods', rule, {
     valid: [
-        '$("").data("something")'
+        '$("").data("something")',
+        {
+            code: '$("").data("abc.def")',
+            options: [{
+                exclude: ['abc.def']
+            }],
+        }
     ],
 
     invalid: [

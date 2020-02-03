@@ -1,6 +1,8 @@
 import * as utils from '../utils';
 import * as estree from 'estree';
 import * as eslint from 'eslint';
+// import * as fs from 'fs';
+// import * as path from 'path';
 
 export const rule: eslint.Rule.RuleModule = {
 	meta: {
@@ -30,6 +32,17 @@ export const rule: eslint.Rule.RuleModule = {
 						if (rootObj && !couldBeSelectMultiple(rootObj.name)) return;
 					}
 				}
+
+				// const fileName = context.getFilename();
+				// if (typeof fileName === 'string' && fileName !== '') {
+				// 	const ext = path.extname(fileName);
+				// 	if (['.js', '.ts'].includes(ext.toLowerCase())) {
+				// 		const htmlPath = `${fileName.substr(0, fileName.length - ext.length)}.html`;
+				// 		if (fs.existsSync(htmlPath)) {
+				// 			console.log(`"${htmlPath}": ${fs.existsSync(htmlPath)}`)
+				// 		}
+				// 	}
+				// }
 
 				context.report({
 					node,

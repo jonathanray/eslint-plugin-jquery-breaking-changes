@@ -17,6 +17,7 @@ affectedMethods.forEach((methodName) => {
     valid.push(`$("input").${methodName}() === undefined`);
     valid.push(`!$("input").${methodName}()`);
     valid.push(`$("input").${methodName}(someValue)`);
+    valid.push(`$("input").${methodName}('')`);
 
     invalid.push({
         code: `$("input").${methodName}() === null`,

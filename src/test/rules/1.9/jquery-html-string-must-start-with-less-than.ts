@@ -9,9 +9,15 @@ ruleTester.run('jquery-html-string-must-start-with-less-than', rule, {
         '$("div")',
         '$("#id")',
         '$(".container")',
+        '$("1 < 2")',
         '$("<div></div>")',
+        'var html = "Should <em>pass</em>"',
         'var html = "<div></div>"',
-        'var html = "1 < 2"'
+        'var html = "<div></div>"; $(html)',
+        `
+            var attr = 'class="a"';
+            $("<div " + attr + "></div>");
+        `
     ],
 
     invalid: [
@@ -20,7 +26,10 @@ ruleTester.run('jquery-html-string-must-start-with-less-than', rule, {
             errors: [{ message }]
         },
         {
-            code: 'var html = "Should <em>fail</em>"',
+            code: `
+                var em = '<em>fail</em>';
+                $("Should " + em);
+            `,
             errors: [{ message }]
         },
     ]

@@ -6,7 +6,13 @@ const message = '(Optional) Internal data object properties are camelCase (no da
 
 ruleTester.run('data-name-with-dashes', rule, {
     valid: [
-        '$("").data("abcDef")'
+        '$("").data("abcDef")',
+        {
+            code: '$("").data("abc-def")',
+            options: [{
+                exclude: ['abc-def']
+            }],
+        }
     ],
 
     invalid: [

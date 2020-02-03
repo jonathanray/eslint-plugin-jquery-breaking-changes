@@ -1,9 +1,17 @@
 import * as estree from 'estree';
 import * as eslint from 'eslint';
 
+export const booleanAttributes = ['allowfullscreen', 'async', 'autofocus', 'autoplay', 'checked', 'compact', 'controls',
+	'declare', 'default', 'defaultchecked', 'defaultmuted', 'defaultselected', 'defer', 'disabled', 'enabled',
+	'formnovalidate', 'hidden', 'indeterminate', 'inert', 'ismap', 'itemscope', 'loop', 'multiple', 'muted',
+	'nohref', 'noresize', 'noshade', 'novalidate', 'nowrap', 'open', 'pauseonexit', 'readonly', 'required', 'reversed',
+	'scoped', 'seamless', 'selected', 'sortable', 'truespeed', 'typemustmatch', 'visible'];
+
 const jquerySelectorFunctions = [
 	'children', 'closest', 'find', 'next', 'nextAll', 'nextUntil',
 	'parent', 'parentsUntil', 'prev', 'prevAll', 'prevUntil', 'siblings'];
+
+const httpFunctions = ['ajax', 'get', 'getJSON', 'put', 'post', 'delete', '$http'];
 
 export function getRootNode(node: estree.Node): estree.Identifier {
 	if (isIdentifier(node)) {
@@ -54,70 +62,146 @@ function looksLikeJQuery(node: estree.Node): boolean {
 	const rootNode = getRootNode(node);
 	if (isJQuery(rootNode, true)) return true;
 
-	const fullExpression = getFullExpression(node);
-	const funcNames = fullExpression.split('.')
+	const funcNames = getFullExpression(node).split('.')
 		.filter(expr => expr.endsWith('()'))
 		.map(funcCall => funcCall.substr(0, funcCall.length - 2));
 
-	return funcNames
-		.some(funcName => {
-			return jquerySelectorFunctions.some(jqFuncName => jqFuncName === funcName);
-		});
+	return funcNames.some(funcName => jquerySelectorFunctions.includes(funcName));
 }
 
 export function getAssignedNode(node: estree.Node, context: eslint.Rule.RuleContext): estree.Node {
 	if (!node) return undefined;
+	if (isBinaryExpression(node)) return node;
 	if (!isIdentifier(node)) return node;
 
 	const scope = context.getScope();
-	const assignedValue = getAssignedNodeByScope(node.name, scope.variableScope);
+	const assignedValue = getAssignedNodeByScope(node, scope.variableScope);
 	return assignedValue !== undefined ? assignedValue : node;
 
-	function getAssignedNodeByScope(name: string, scope: eslint.Scope.Scope | null): estree.Node {
+	function getAssignedNodeByScope(id: estree.Identifier, scope: eslint.Scope.Scope | null): estree.Node {
 		while (scope) {
-			const assignment = getVariableAssignment(name, scope.block);
-			if (assignment !== undefined) return assignment;
+			const assignments = getVariableAssignments(id, scope.block);
+			if (assignments.length > 0) return assignments[assignments.length - 1];
 
 			scope = scope.upper;
 		}
 	}
+}
 
-	function getVariableAssignment(name: string, node: estree.Node): estree.Node {
-		if (isFunctionDeclaration(node) || isFunctionExpression(node)) {
-			return getVariableAssignment(name, node.body);
-		}
+function getVariableAssignments(id: estree.Identifier | estree.MemberExpression, node: estree.Node): estree.Node[] {
+	if (isFunctionDeclaration(node) || isFunctionExpression(node)) {
+		return getVariableAssignments(id, node.body);
+	}
 
-		if (isBlockStatement(node) || isProgram(node)) {
-			const assignments = node.body
-				.filter(n => isExpressionStatement(n))
-				.map((es: estree.ExpressionStatement) => es.expression)
-				.filter(e => isAssignmentExpression(e))
-				.filter((ae: estree.AssignmentExpression) => isIdentifier(ae.left, name))
-				.map((ae: estree.AssignmentExpression) => ae.right);
+	if (isBlockStatement(node) || isProgram(node)) {
+		let varDeclarations: estree.Node[] = [];
+		let assignments: estree.Expression[] = [];
 
-			if (assignments.length > 0) {
-				return assignments[assignments.length - 1];
-			}
-
-			const varDeclarations = node.body
+		if (isIdentifier(id)) {
+			varDeclarations = node.body
 				.filter(n => isVariableDeclaration(n) && n.declarations.length > 0)
 				.reduce((arr, vd: estree.VariableDeclaration) => arr.concat(vd.declarations), [])
 				.filter(vd => isVariableDeclarator(vd))
-				.filter(vd => isIdentifier(vd.id, name))
-				.map(i => i.init);
+				.filter(vd => isIdentifier(vd.id, id.name))
+				.map(i => i.init as estree.Node);
 
-			if (varDeclarations.length > 0) {
-				return varDeclarations[varDeclarations.length - 1];
+			assignments = node.body
+				.filter(n => isExpressionStatement(n))
+				.map((es: estree.ExpressionStatement) => es.expression)
+				.filter(e => isAssignmentExpression(e))
+				.filter((ae: estree.AssignmentExpression) => isIdentifier(ae.left, id.name))
+				.map((ae: estree.AssignmentExpression) => ae.right);
+		} else if (isMemberExpression(id)) {
+			// const idFullExpression = getFullExpression(id);
+			const obj = id.object;
+			const prop = id.property;
+			if (isIdentifier(obj) && isIdentifier(prop)) {
+				varDeclarations = node.body
+					.filter(n => isVariableDeclaration(n) && n.declarations.length > 0)
+					.reduce((arr, vd: estree.VariableDeclaration) => arr.concat(vd.declarations), [])
+					.filter(vd => isVariableDeclarator(vd))
+					.filter((vd: estree.VariableDeclarator) => isIdentifier(vd.id, obj.name))
+					.map((vd: estree.VariableDeclarator) => {
+						if (isObjectExpression(vd.init)) {
+							return vd.init.properties
+								.filter(p => isIdentifier(p.key, prop.name))
+								.map(p => p.value);
+						}
+						return [];
+					})
+					.reduce((arr: estree.Node[], values: estree.Node[]) => arr.concat(values), []);
 			}
+
+			assignments = node.body
+				.filter(n => isExpressionStatement(n))
+				.map((es: estree.ExpressionStatement) => es.expression)
+				.filter(e => isAssignmentExpression(e))
+				.filter((ae: estree.AssignmentExpression) => isMemberExpression(ae.left) && memberExpressionsAreEqual(ae.left, id))
+				.map((ae: estree.AssignmentExpression) => ae.right);
 		}
 
-		return undefined;
+		return varDeclarations.concat(assignments);
 	}
+
+	return [];
 }
 
-export function getAssignedLiteralValue(node: estree.Node, context: eslint.Rule.RuleContext) {
-	const assignedValue = getAssignedNode(node, context);
-	return isLiteral(assignedValue) ? assignedValue.value : undefined;
+function memberExpressionsAreEqual(memberExpr1: estree.MemberExpression, memberExpr2: estree.MemberExpression): boolean {
+	if (isIdentifier(memberExpr1.property) && !isIdentifier(memberExpr2.property, memberExpr1.property.name)) return false;
+
+	if (isIdentifier(memberExpr1.object)) {
+		if (!isIdentifier(memberExpr2.object, memberExpr1.object.name)) return false;
+	} else if (isMemberExpression(memberExpr1.object)) {
+		if (!isMemberExpression(memberExpr2.object)) return false;
+		return memberExpressionsAreEqual(memberExpr1.object, memberExpr2.object);
+	}
+	return false;
+}
+
+export function getAssignedLiteralValue(node: estree.Node, context: eslint.Rule.RuleContext): any {
+	if (isLiteral(node)) return node.value;
+	if (isObjectExpression(node)) return node;
+	if (isBinaryExpression(node) && node.operator === '+') {
+		return getAssignedLiteralValue(node.left, context)
+			+ getAssignedLiteralValue(node.right, context);
+	}
+	if (!isIdentifier(node) && !isMemberExpression(node)) return undefined;
+
+	const scope = context.getScope();
+	const assignedValues = getAssignedValuesByScope(node, scope.variableScope);
+	if (assignedValues.length === 0) return undefined;
+
+	const nodeFullExpression = getFullExpression(node);
+	let literalValue: any = undefined;
+	for (const assignedValue of assignedValues) {
+		if (isLiteral(assignedValue)) {
+			literalValue = assignedValue.value;
+		} else if (isObjectExpression(assignedValue)) {
+			literalValue = assignedValue;
+		} else if (isBinaryExpression(assignedValue) && assignedValue.operator === '+') {
+			//(isIdentifier(assignedValue.left) || isMemberExpression(assignedValue.left)) && 
+			const leftValue = getFullExpression(assignedValue.left) === nodeFullExpression
+				? literalValue
+				: getAssignedLiteralValue(assignedValue.left, context);
+			const rightValue = getFullExpression(assignedValue.right) === nodeFullExpression
+				? literalValue
+				: getAssignedLiteralValue(assignedValue.right, context);
+			literalValue = leftValue + rightValue;
+		}
+	}
+
+	return literalValue;
+}
+
+function getAssignedValuesByScope(id: estree.Identifier | estree.MemberExpression, scope: eslint.Scope.Scope | null): estree.Node[] {
+	const assignments: estree.Node[] = [];
+	while (scope) {
+		const blockAssignments = getVariableAssignments(id, scope.block);
+		assignments.unshift(...blockAssignments);
+		if (blockAssignments.some(n => isLiteral(n))) break;
+		scope = scope.upper;
+	}
+	return assignments;
 }
 
 export function getJQuerySelectors(node: estree.Node, selectors?: string[]): string[] {
@@ -168,6 +252,11 @@ export function isThisExpression(node: estree.Node): node is estree.ThisExpressi
 function isFunctionDeclaration(node: estree.Node): node is estree.FunctionDeclaration {
 	if (!node) return false;
 	return node.type === 'FunctionDeclaration';
+}
+
+export function isArrowFunctionExpression(node: estree.Node): node is estree.ArrowFunctionExpression {
+	if (!node) return false;
+	return node.type === 'ArrowFunctionExpression';
 }
 
 export function isFunctionExpression(node: estree.Node): node is estree.FunctionExpression {
@@ -377,6 +466,21 @@ export function shouldExcludeNode(node: estree.Node, excludedExpressions: Array<
 		});
 }
 
+export function shouldExcludeValue(value: string, excludedExpressions: Array<string | RegExp>) {
+	if (!Array.isArray(excludedExpressions)) return false;
+
+	return excludedExpressions
+		.some(exclude => {
+			if (typeof exclude === 'string') {
+				return value === exclude;
+			}
+			if (exclude instanceof RegExp) {
+				return exclude.test(value);
+			}
+			return false;
+		});
+}
+
 export function couldCompareAgainstNull(node: estree.Node, context: eslint.Rule.RuleContext): boolean {
 	const parent: estree.Node = (node as any).parent; // eslint-disable-line @typescript-eslint/no-explicit-any
 	if (!parent) return false;
@@ -399,4 +503,12 @@ export function couldCompareAgainstNull(node: estree.Node, context: eslint.Rule.
 	if (isVariableDeclarator(parent)) return true;
 
 	return false;
+}
+
+export function isHttpCall(node: estree.CallExpression): boolean {
+	const funcNames = getFullExpression(node.callee).split('.')
+		.filter(expr => expr.endsWith('()'))
+		.map(funcCall => funcCall.substr(0, funcCall.length - 2));
+
+	return funcNames.some(funcName => httpFunctions.includes(funcName));
 }

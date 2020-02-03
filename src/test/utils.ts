@@ -92,6 +92,27 @@ describe('utils', () => {
 			const result = utils.getAssignedLiteralValue(argument, context);
 			assert.equal(result, 'expectedValue');
 		});
+
+		it('should return literal value of string concatenation', () => {
+			const src = `
+				var x = 'expect';
+				(function() {
+					x = x + 'edVal';
+					doSomething(x + "ue");
+				})();
+			`;
+
+			const parsed = parseToESLint(src);
+			const context = {
+				getScope: () => getInnerMostChildScope(parsed.globalScope)
+			} as eslint.Rule.RuleContext;
+
+			const callExpression = getCallExpression(parsed.ast, 'doSomething');
+			const argument = callExpression.arguments[0];
+
+			const result = utils.getAssignedLiteralValue(argument, context);
+			assert.equal(result, 'expectedValue');
+		});
 	});
 
 	describe('getJQuerySelectors', () => {

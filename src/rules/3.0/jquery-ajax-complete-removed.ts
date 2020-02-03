@@ -11,23 +11,23 @@ export const rule: eslint.Rule.RuleModule = {
 	},
 	create: (context) => {
 		const excludes = utils.getExcludesFromContextOptions(context);
-		const includeAngularHttp = !!utils.getContextOptions(context)['$http'];
 
 		return {
 			CallExpression(node: estree.CallExpression) {
 				if (utils.shouldExcludeNode(node, excludes)) return;
-				if (!utils.isMemberExpression(node.callee, ['ajax', 'complete'])) return;
+				if (!utils.isMemberExpression(node.callee, 'complete')) return;
 
-				if (utils.isIdentifier(node.callee.property, 'ajax')) {
+				if (!utils.isHttpCall(node)) {
 					if (node.arguments.length === 0) return;
 
-					const arg = utils.getAssignedNode(node.arguments[0], context);
-					if (arg === undefined) return false;
-					if (!utils.isObjectExpression(arg, 'complete')) return;
-				} else if (!includeAngularHttp) {
-					const rootNode = utils.getRootNode(node.callee);
-					if (utils.isIdentifier(rootNode, '$http')) return;
-					if (utils.isMemberExpression(rootNode, '$http')) return;
+					const arg = node.arguments[0];
+					if (utils.isIdentifier(arg)) {
+						const argValue = utils.getAssignedLiteralValue(node.arguments[0], context);
+						if (!['function', 'undefined'].includes(typeof argValue)) return;
+					} else {
+						const isFunction = utils.isFunctionExpression(arg) || utils.isArrowFunctionExpression(arg);
+						if (!isFunction) return;
+					}
 				}
 
 				context.report({

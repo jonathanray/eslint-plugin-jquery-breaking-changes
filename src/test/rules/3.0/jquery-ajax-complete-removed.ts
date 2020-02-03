@@ -6,15 +6,19 @@ const message = 'jQuery.ajax().complete() removed in jQuery 3.0';
 
 ruleTester.run('jquery-ajax-complete-removed', rule, {
     valid: [
+        'obj.complete()',
+        'obj.complete("notCallback")',
+        '$.obj.complete()',
         '$.ajax({})',
         '$.ajax(obj)',
         '$.ajax().then().catch().finally();',
         '$.get().then().catch().finally();',
         '$.getJSON().then().catch().finally();',
         '$.post().then().catch().finally();',
-        '$http({}).complete()',
-        '$http.get().complete()',
-        '$http.post().complete()',
+        '$http({})',
+        '$http.get()',
+        '$http.post()',
+        '$.ajax({ complete: function() {} })'
     ],
 
     invalid: [
@@ -35,33 +39,24 @@ ruleTester.run('jquery-ajax-complete-removed', rule, {
             errors: [{ message }]
         },
         {
-            code: '$.ajax({ complete: function() {} })',
-            errors: [{ message }]
-        },
-        {
-            code: 'var obj = { complete: function() {} }; $.ajax(obj)',
-            errors: [{ message }]
-        },
-        {
             code: '$http({}).complete()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.get().complete()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
         },
         {
             code: '$http.post().complete()',
-            options: [{
-                '$http': true
-            }],
             errors: [{ message }]
-        }
+        },
+        {
+            code: 'obj.complete(function() {})',
+            errors: [{ message }]
+        },
+        {
+            code: 'obj.complete(callback)',
+            errors: [{ message }]
+        },
     ]
 });

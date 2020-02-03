@@ -2,12 +2,6 @@ import * as utils from '../utils';
 import * as estree from 'estree';
 import * as eslint from 'eslint';
 
-const booleanAttributes = ['allowfullscreen', 'async', 'autofocus', 'autoplay', 'checked', 'compact', 'controls',
-	'declare', 'default', 'defaultchecked', 'defaultmuted', 'defaultselected', 'defer', 'disabled', 'enabled',
-	'formnovalidate', 'hidden', 'indeterminate', 'inert', 'ismap', 'itemscope', 'loop', 'multiple', 'muted',
-	'nohref', 'noresize', 'noshade', 'novalidate', 'nowrap', 'open', 'pauseonexit', 'readonly', 'required', 'reversed',
-	'scoped', 'seamless', 'selected', 'sortable', 'truespeed', 'typemustmatch', 'visible'];
-
 export const rule: eslint.Rule.RuleModule = {
 	meta: {
 		type: 'problem',
@@ -28,10 +22,10 @@ export const rule: eslint.Rule.RuleModule = {
 				const argValue = utils.getAssignedLiteralValue(arg, context);
 
 				if (typeof argValue === 'string') {
-					if (!booleanAttributes.includes(argValue.toLowerCase())) return;
+					if (!utils.booleanAttributes.includes(argValue.toLowerCase())) return;
 				} else if (utils.isIdentifier(arg)) {
 					const name = arg.name.toLowerCase();
-					const isMatch = booleanAttributes.some((boolAttr) => name.includes(boolAttr));
+					const isMatch = utils.booleanAttributes.some((boolAttr) => name.includes(boolAttr));
 					if (!isMatch) return;
 				}
 

@@ -17,14 +17,14 @@
 				"--timeout",
 				"999999",
 				"--colors",
-				"${workspaceFolder}/src/test/rules/3.0/data-object-with-dash.ts"
+				"${workspaceFolder}/src/test/rules/3.0/jquery-ajax-complete-removed.ts"
 			]
 		},
 		{
 			"type": "node",
 			"request": "launch",
 			"name": "Test Utils",
-			"program": "${workspaceFolder}/lib/node_modules/mocha/bin/_mocha",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/mocha",
 			"args": [
 				"-r",
 				"ts-node/register/transpile-only",

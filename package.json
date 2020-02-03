@@ -22,11 +22,13 @@
     "eslint": "eslint --ext .ts ."
   },
   "dependencies": {
+    "lodash": "^4.17.15",
     "requireindex": "^1.2.0"
   },
   "devDependencies": {
     "@types/eslint": "^6.1.2",
     "@types/estree": "0.0.39",
+    "@types/lodash": "^4.14.149",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.1",
     "@types/requireindex": "^1.2.0",

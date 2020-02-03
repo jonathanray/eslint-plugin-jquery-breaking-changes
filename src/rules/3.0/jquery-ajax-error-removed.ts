@@ -16,7 +16,7 @@ export const rule: eslint.Rule.RuleModule = {
 		return {
 			CallExpression(node: estree.CallExpression) {
 				if (utils.shouldExcludeNode(node, excludes)) return;
-				if (!utils.isMemberExpression(node.callee, ['ajax', 'error'])) return;
+				if (!utils.isMemberExpression(node.callee, ['error'])) return;
 				if (utils.isIdentifier(node.callee.object, 'console')) return;
 
 				if (utils.isIdentifier(node.callee.property, 'ajax')) {

@@ -17,9 +17,11 @@ export const rule: eslint.Rule.RuleModule = {
 				if (utils.shouldExcludeNode(node, excludes)) return;
 				if (!utils.isMemberExpression(node.callee, 'data')) return;
 				if (node.arguments.length === 0) return;
+				
 				const argValue = utils.getAssignedLiteralValue(node.arguments[0], context);
 				if (typeof argValue !== 'string') return;
 				if (!argValue.includes('.')) return;
+				if (utils.shouldExcludeValue(argValue, excludes)) return;
 
 				context.report({
 					node,

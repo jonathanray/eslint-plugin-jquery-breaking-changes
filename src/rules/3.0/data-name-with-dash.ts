@@ -21,6 +21,7 @@ export const rule: eslint.Rule.RuleModule = {
 				const argValue = utils.getAssignedLiteralValue(node.arguments[0], context);
 				if (typeof argValue !== 'string') return;
 				if (!argValue.includes('-')) return;
+				if (utils.shouldExcludeValue(argValue, excludes)) return;
 
 				context.report({
 					node,
