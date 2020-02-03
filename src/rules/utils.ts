@@ -347,6 +347,11 @@ export function isLiteral(node: estree.Node): node is estree.Literal {
 	return node.type === 'Literal';
 }
 
+export function isLogicalExpression(node: estree.Node): node is estree.LogicalExpression {
+	if (!node) return false;
+	return node.type === 'LogicalExpression';
+}
+
 export function isMemberExpression(node: estree.Node, propName?: string | string[], objName?: string): node is estree.MemberExpression {
 	if (!node) return false;
 	if (node.type !== 'MemberExpression') return false;
