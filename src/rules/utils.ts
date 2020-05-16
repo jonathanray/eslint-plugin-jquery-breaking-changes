@@ -249,6 +249,11 @@ export function isThisExpression(node: estree.Node): node is estree.ThisExpressi
 	return node.type === 'ThisExpression';
 }
 
+export function isFunction(node: estree.Node): node is estree.FunctionDeclaration | estree.FunctionExpression | estree.ArrowFunctionExpression {
+	if (!node) return false;
+	return ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'].includes(node.type);
+}
+
 function isFunctionDeclaration(node: estree.Node): node is estree.FunctionDeclaration {
 	if (!node) return false;
 	return node.type === 'FunctionDeclaration';
@@ -285,7 +290,7 @@ export function isCallExpression(node: estree.Node): node is estree.CallExpressi
 	return node.type === 'CallExpression';
 }
 
-function isExpressionStatement(node: estree.Node): node is estree.ExpressionStatement {
+export function isExpressionStatement(node: estree.Node): node is estree.ExpressionStatement {
 	if (!node) return false;
 	return node.type === 'ExpressionStatement';
 }
@@ -345,6 +350,11 @@ function isVariableDeclarator(node: estree.Node): node is estree.VariableDeclara
 export function isLiteral(node: estree.Node): node is estree.Literal {
 	if (!node) return false;
 	return node.type === 'Literal';
+}
+
+export function isArrayExpression(node: estree.Node): node is estree.ArrayExpression {
+	if (!node) return false;
+	return node.type === 'ArrayExpression';
 }
 
 export function isLogicalExpression(node: estree.Node): node is estree.LogicalExpression {
